@@ -45,7 +45,7 @@ public class AntColonyOptimization
         PrecountDists();
     }
 
-    public void Optimize(int iterations, int ants)
+    public (double power, double price) Optimize(int iterations, int ants)
     {
         var currentBestSolution = new int[numLocations, numUnits];
         var currentBestSolutionPower = double.MinValue;
@@ -68,6 +68,18 @@ public class AntColonyOptimization
         }
 
         PrintBestSoluion(currentBestSolution, currentBestSolutionPower);
+
+        var price = 0.0;
+        for (int i = 0; i < numLocations; i++)
+        {
+            for (int j = 0; j < numUnits; j++)
+            {
+                if(currentBestSolution[i, j] == 1)
+                    price += costs[i, j]; 
+            }
+        }
+
+        return (currentBestSolutionPower, price);
     }
 
     private int[,] CreateSolution(double[,] pheromones)
@@ -102,6 +114,7 @@ public class AntColonyOptimization
                         {
                             positions[loc, unit] = 1;
                             badUnits = new HashSet<int>();
+                            currentPrice += costs[loc, unit];
                             break;
                         }
 
@@ -109,7 +122,8 @@ public class AntColonyOptimization
                         UpdatePosibilities(currentPosibilities, pheromones, loc, badUnits);
                         goto GenerateRandomNumber;  
                     }
-                    else{
+                    else
+                    {
                         continue;
                     }
                 }
@@ -123,6 +137,7 @@ public class AntColonyOptimization
                         {
                             positions[loc, unit] = 1;
                             badUnits = new HashSet<int>();
+                            currentPrice += costs[loc, unit];
                             break;
                         }
 
@@ -141,6 +156,7 @@ public class AntColonyOptimization
                     {
                         positions[loc, unit] = 1;
                         badUnits = new HashSet<int>();
+                        currentPrice += costs[loc, unit];
                         break;
                     }
 
