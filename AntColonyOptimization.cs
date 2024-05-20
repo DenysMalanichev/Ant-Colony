@@ -1,7 +1,4 @@
-using System.Globalization;
-using System.Runtime.InteropServices;
-
-public class AntColonyOptimization
+public class AntColonyOptimizator
 {
     private readonly int numLocations;
     private readonly int numUnits;
@@ -16,7 +13,7 @@ public class AntColonyOptimization
 
     private readonly double[,] precountedDists;
 
-    public AntColonyOptimization(
+    public AntColonyOptimizator(
         double[,] locations,
         double[,] costs,
         double[,] powers,

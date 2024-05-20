@@ -1,0 +1,17 @@
+    Ants
+10
+    Iterations
+20
+    Location coordinates
+12 20
+3 4
+    Costs matrix
+12 13 14
+15 16 17
+    Powers matrix
+100 120 110
+90 80 65
+    Budget
+100
+    Min dist
+10
