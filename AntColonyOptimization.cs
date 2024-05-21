@@ -10,18 +10,19 @@ public class AntColonyOptimizator
     private readonly double alpha;  // Вплив феромону
     private readonly double budget;
     private readonly Random rand = new();
+    private readonly StreamWriter _writer;
 
     private readonly double[,] precountedDists;
 
-    public AntColonyOptimizator(
-        double[,] locations,
-        double[,] costs,
-        double[,] powers,
-        double totalBudget,
-        double minDist,
-        double evaporationRate = 0.05)
+    public AntColonyOptimizator(double[,] locations,
+                                double[,] costs,
+                                double[,] powers,
+                                double totalBudget,
+                                double minDist,
+                                StreamWriter writer,
+                                double evaporationRate = 0.05)
     {
-        if(costs.GetLength(0) != powers.GetLength(0) || costs.GetLength(1) != powers.GetLength(1))
+        if (costs.GetLength(0) != powers.GetLength(0) || costs.GetLength(1) != powers.GetLength(1))
         {
             throw new ArgumentException("costs and powers arrays must be of the same size.");
         }
@@ -34,12 +35,14 @@ public class AntColonyOptimizator
         this.minDist = minDist;
         this.evaporationRate = evaporationRate;
         budget = totalBudget;
-        
+        _writer = writer;
+
         alpha = 1;
 
         precountedDists = new double[numLocations, numLocations];
 
         PrecountDists();
+        
     }
 
     public (double power, double price) Optimize(int iterations, int ants)
@@ -346,31 +349,38 @@ public class AntColonyOptimizator
     private void PrintBestSoluion(int[,] solution, double power)
     {
         Console.WriteLine($"Founded solution is {power} units of power. Placement:");
+        _writer.WriteLine($"Founded solution is {power} units of power. Placement:");
 
         Console.Write(" ");
+        _writer.Write(" ");
         for (int unit = 0; unit < numUnits; unit++)
         {
             Console.Write($"  U{unit + 1}");
+            _writer.Write($"  U{unit + 1}");
         }
 
         for (int loc = 0; loc < numLocations; loc++)
         {
             
             Console.WriteLine();
+            _writer.WriteLine();
 
             Console.Write($"L{loc + 1}  ");
+            _writer.Write($"L{loc + 1}  ");
             for (int unit = 0; unit < numUnits; unit++)
             {
                 if (solution[loc, unit] == 1)
                 {
                     Console.Write("✓   ");
+                    _writer.Write("✓   ");
                 }
                 else
                 {
-                    Console.Write("-   ");
+                    _writer.Write("-   ");
                 }
             }
             Console.WriteLine();
+            _writer.WriteLine();
         }
     }
 }

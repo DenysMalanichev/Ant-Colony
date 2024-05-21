@@ -4,13 +4,15 @@ public class TaskGenerator
     private readonly int units;
     private readonly int budget;
     private readonly double minDistance;
+    private readonly StreamWriter _writer;
 
-    public TaskGenerator(int locations, int units, int budget, int minDist)
+    public TaskGenerator(int locations, int units, int budget, int minDist, StreamWriter writer)
     {
         this.locations = locations;
         this.units = units;
         this.budget = budget;
         this.minDistance = minDist;
+        _writer = writer;
     }
 
     public Task Generate()
@@ -85,6 +87,7 @@ public class TaskGenerator
                 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Bad location is " + (i + 1) + " with good " + (optimalLocations[optimalLoc].location + 1));
+                _writer.WriteLine("Bad location is " + (i + 1) + " with good " + (optimalLocations[optimalLoc].location + 1));
                 Console.ResetColor();
                 
                 badLocsIndexes[currentBadLoc] = i;
@@ -135,22 +138,29 @@ public class TaskGenerator
         }
 
         Console.WriteLine("Coordinates of possible locations (x, y):");
+        _writer.WriteLine("Coordinates of possible locations (x, y):");
         for (int i = 0; i < locations; i++)
         {
             Console.WriteLine($"Location {i+1}: ({x[i]}, {y[i]})");
+            _writer.WriteLine($"Location {i+1}: ({x[i]}, {y[i]})");
         }
 
         Console.WriteLine("\nCost of VDE:");
+        _writer.WriteLine("\nCost of VDE:");
         PrintMatrix(cost);
 
         Console.WriteLine("\nPower of VDE:");
+        _writer.WriteLine("\nPower of VDE:");
         PrintMatrix(power);
 
         Console.WriteLine($"\nTotal budget: {budget}");
+        _writer.WriteLine($"\nTotal budget: {budget}");
         Console.WriteLine($"Minimum distance required: {minDistance} units");
+        _writer.WriteLine($"Minimum distance required: {minDistance} units");
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine($"Optimal location and VDE for maximum energy production: ");
+        _writer.WriteLine($"Optimal location and VDE for maximum energy production: ");
         Console.ForegroundColor = ConsoleColor.Yellow;
 
         double totalPower = 0;
@@ -158,19 +168,16 @@ public class TaskGenerator
         for(int i = 0; i < optimalLocations.Length; i++)
         {
             Console.WriteLine($"Location {optimalLocations[i].location + 1}, VDE {optimalLocations[i].unit + 1}");
+            _writer.WriteLine($"Location {optimalLocations[i].location + 1}, VDE {optimalLocations[i].unit + 1}");
             totalPower += power[optimalLocations[i].location, optimalLocations[i].unit];
             totalPrice += cost[optimalLocations[i].location, optimalLocations[i].unit];
         }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("\nTotal power: " + totalPower);
+        _writer.WriteLine("\nTotal power: " + totalPower);
         Console.WriteLine("Total cost: " + totalPrice);
+        _writer.WriteLine("Total cost: " + totalPrice);
         Console.ResetColor();
-
-        // double totalPower = 0;
-        // for(int i = 0; i < optimalLocations.Length; i++)
-        // {
-        //     totalPower += power[optimalLocations[i].location, optimalLocations[i].unit];
-        // }
 
         var coordinates = new double[locations, 2];
         for (int i = 0; i < locations; i++)
@@ -190,7 +197,7 @@ public class TaskGenerator
         };
     }
 
-    private static void PrintMatrix(double[,] matrix)
+    private void PrintMatrix(double[,] matrix)
     {
         int rows = matrix.GetLength(0);
         int cols = matrix.GetLength(1);
@@ -200,8 +207,10 @@ public class TaskGenerator
             for (int j = 0; j < cols; j++)
             {
                 Console.Write(matrix[i, j] + "\t");
+                _writer.Write(matrix[i, j] + "\t");
             }
             Console.WriteLine();
+            _writer.WriteLine();
         }
     }
 

@@ -131,7 +131,8 @@ if (answer == "1")
         Console.WriteLine("Wrong input");
     }
 
-    var aco = new AntColonyOptimizator(locations, costs, powers, budget, minDist, evaporationRate);
+    using var streamWriter = new StreamWriter("Result.txt");
+    var aco = new AntColonyOptimizator(locations, costs, powers, budget, minDist, streamWriter, evaporationRate);
     aco.Optimize(ants, iterations); 
 }
 else if(answer == "2")
@@ -217,23 +218,31 @@ else if(answer == "2")
 
     double avgError = 0;
 
+    using var streamWriter = new StreamWriter("Result.txt");
     for(int i = 0; i < tasks; i++)
     {
-        var generator = new TaskGenerator(locations, units, budget, minDist);
+        
+        var generator = new TaskGenerator(locations, units, budget, minDist, streamWriter);
         var task = generator.Generate();
-
-        var aco1 = new AntColonyOptimizator(task.Locations, task.Costs, task.Powers, task.Budget, task.MinDist, evaporationRate);
+        
+        var aco1 = new AntColonyOptimizator(task.Locations, task.Costs, task.Powers, task.Budget, task.MinDist, streamWriter ,evaporationRate);
         (double power, double price) foundSolution = aco1.Optimize(30, 100);
 
         var error = Math.Abs(task.ExpectedTotalPower / foundSolution.power * 100 - 100);
         avgError = (avgError + error) / 2; 
 
         Console.WriteLine($"Expected result: {task.ExpectedTotalPower}. Returned: {foundSolution.power}.");
+        streamWriter.WriteLine($"Expected result: {task.ExpectedTotalPower}. Returned: {foundSolution.power}.");
         Console.WriteLine($"Error is {error}");
+        streamWriter.WriteLine($"Error is {error}");
         Console.WriteLine("Price: " + foundSolution.price);
+        streamWriter.WriteLine("Price: " + foundSolution.price);
+
+        streamWriter.WriteLine("-------");
     }
 
-    Console.WriteLine(tasks + " tasks finished with avarage error " + avgError);;
+    Console.WriteLine(tasks + " tasks finished with avarage error " + avgError);
+    streamWriter.WriteLine(tasks + " tasks finished with avarage error " + avgError);
 }
 else if (answer == "3")
 {
@@ -300,7 +309,8 @@ else if (answer == "3")
                     break;
             }
         }
-        var aco = new AntColonyOptimizator(locations, costs, powers, budget, minDist, evaporationRate);
+        using var streamWriter = new StreamWriter("Result.txt");
+        var aco = new AntColonyOptimizator(locations, costs, powers, budget, minDist, streamWriter, evaporationRate);
         aco.Optimize(ants, iterations); 
     }
     catch (Exception ex)
